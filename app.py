@@ -31,9 +31,9 @@ load_dotenv()
 def handler(request):
     return handle_request(app, request)
 
-# load SQL modules, secrets
-with open("module/config_prod.json", "r") as file:
-    config = json.load(file)
+# # load SQL modules, secrets
+# with open("module/config_prod.json", "r") as file:
+#     config = json.load(file)
 
 # Add BQ directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -54,7 +54,7 @@ except Exception:
     print("BigQuery not configured. Running without BigQuery.")
     client = None 
 
-videoamp_client = VideoAmpClient("radhika.ayyapusetty@groupm.com", "Welcome@123", env.pass)
+videoamp_client = VideoAmpClient("radhika.ayyapusetty@groupm.com", "Welcome@123", env.PASS)
 videoamp_client_token = videoamp_client.get_access_token()
 
 
