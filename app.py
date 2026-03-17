@@ -63,11 +63,15 @@ videoamp_client_token = videoamp_client.get_access_token()
 #     return ""
 
 
-@app.route('/', methods=['GET'])
+# @app.route('/', methods=['GET'])
+# def home():
+#     user_email = get_iap_user_email(request)
+#     session['user_email'] = user_email
+#     return render_template('index.html')
+
+@app.route("/")
 def home():
-    user_email = get_iap_user_email(request)
-    session['user_email'] = user_email
-    return render_template('index.html')
+    return "Hello World"
 
 @app.route('/send-spot-export-email', methods=['POST'])
 def send_spot_export_email():
