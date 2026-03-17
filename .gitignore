@@ -72,4 +72,4 @@ htmlcov/
 # =========================
 node_modules/
 
-.module/
+module/
