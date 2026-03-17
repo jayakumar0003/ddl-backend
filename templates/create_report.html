@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Report</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+  <style>  
+	body {
+		background-color: #f8f9fa;
+	}
+	.mt-5 {
+            margin-top: 2rem !important;
+        }
+
+	.container {
+		background-color: #fff;
+		padding: 2rem;
+		border-radius: 16px;
+		box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+	}
+	
+	mt-5 {
+    margin-top: 2rem !important;
+}
+
+	h2 {
+		font-weight: 600;
+		color: #fff;
+		margin: 0;
+	}      
+
+	.btn {
+		border-radius: 50px;
+		padding: 6px 20px;
+		font-weight: 500;
+	}
+
+	table.dataTable thead {
+		background-color: #0d6efd;
+		color: white;
+	}
+
+	tfoot {
+		display: none;
+	}
+
+	.back-icon {
+		font-size: 1.4rem;
+		color: #fff;
+		text-decoration: none;
+	}
+
+	.back-icon:hover {
+		color: #d1e0ff;
+	}
+
+	.page-header {
+		background-color: #0d6efd;
+		padding: 1rem 1.5rem;
+		border-radius: 10px;
+		margin-bottom: 1.5rem;
+	}
+
+	.page-header {
+		background-color: #0d6efd;
+		padding: 0.5rem 1rem;
+		border-radius: 10px;
+		margin-bottom: 1.5rem;
+	}
+
+	h2 {
+		font-weight: 600;
+		color: #fff;
+		font-size: 1.25rem;
+		margin: 0;
+	}
+
+	.back-icon {
+		font-size: 1.2rem;
+		color: #fff;
+		text-decoration: none;
+		line-height: 1;
+	}
+
+	.select2-container .select2-selection--single,
+    .select2-container .select2-selection--multiple {
+      padding: 5px;
+    }
+
+    .loadingOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(255, 255, 255, 0.3);
+      display: flex !important;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      cursor: wait;
+      display: none;
+    }
+
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 6px solid #dbe3ff;
+      border-top: 6px solid #0d6efd;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    a i.bi {
+        transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+    a:hover i.bi {
+        transform: scale(1.2);
+        opacity: 0.8;
+    }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+  <div class="page-header d-flex justify-content-between align-items-center">
+	<div class="d-flex align-items-center">
+		<a href="/measurement-reports" class="me-3 back-icon"><i class="bi bi-arrow-left-circle-fill"></i></a>
+		<h2>Create Report</h2>
+	</div>
+</div>
+
+  <form>    
+    <div class="mb-3">
+      <label for="displayName" class="form-label">Name</label>
+      <input type="text" class="form-control" id="displayName" placeholder="">
+    </div>
+
+     <div class="mb-3">
+      <label for="requestType" class="form-label">Request Type</label>
+      <select id="requestType" class="form-select">
+          <option value="ESSENTIALS">Ads - Audience Essentials</option>
+          <option value="ADVANCED_RF">Ads - Advanced Reach & Frequency</option>
+          <option value="DAYPART">Content - Network/Daypart Report</option>
+      </select>
+    </div>
+
+    <!--<div class="mb-3">
+      <label for="businessUnit" class="form-label">Business Unit</label>
+      <select id="businessUnit" class="form-select">
+          <option value="Nexus">Nexus</option>
+      </select>
+    </div>-->
+
+    <div class="mb-3">
+      <label for="startDate" class="form-label">Start Date</label>
+     <input type="date" class="form-control" id="startDate" >
+    </div>
+
+    <div class="mb-3">
+      <label for="endDate" class="form-label">End Date</label>
+     <input type="date" class="form-control" id="endDate" >
+    </div>
+
+    <div class="mb-3">
+      <label for="currencyOfRecord" class="form-label">Currency Of Record *</label>
+      <select id="currencyOfRecord" class="form-select">
+          <option value="24">2023-24 Currency</option>
+          <option value="25">2024-25 Currency</option>
+          <option value="26">2025-26 Currency</option>
+      </select>
+    </div>
+
+    <!--<div class="mb-3">
+      <label for="timeShift" class="form-label">Time Shift *</label>
+      <select id="timeShift" class="form-select">
+          <option value="plus7">Live + 7</option>
+      </select>
+    </div>-->
+
+    <div class="mb-3">
+      <label for="audienceId" class="form-label">Audience</label>
+      <select id="audienceId" class="form-select select2-multi" multiple>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="datasourceGroupId" class="form-label">Datasource Groups</label>
+      <select id="datasourceGroupId" class="form-select select2-multi" multiple>
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
+  </form>
+
+</div>
+  <br/>
+<div id="loadingOverlay">
+  <div class="loadingOverlay">
+    <div class="text-center">
+      <div class="spinner"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+$(document).ready(function () {
+   function safeJsonParse(str) {
+        try {
+          return typeof str === "string" ? JSON.parse(str) : str;
+        } catch (e) {
+          console.error("JSON parse error:", e);
+          return {};
+        }
+    }
+
+    $('form').on('submit', function (e) {
+        e.preventDefault();
+        let isValid = true;
+
+        const displayName = $('#displayName').val().trim();
+        if (!displayName) {
+            alert("Name is required.");
+            isValid = false;
+            return;
+        }
+
+        const requestType = $('#requestType').val();
+        if (!requestType) {
+            alert("Request Type is required.");
+            isValid = false;
+            return;
+        }
+
+        const startDate = $('#startDate').val().trim();
+        if (!startDate) {
+            alert("Start Date is required.");
+            isValid = false;
+            return;
+        }
+
+        const endDate = $('#endDate').val().trim();
+        if (!endDate) {
+            alert("End Date is required.");
+            isValid = false;
+            return;
+        }
+
+        const currencyOfRecord = $('#currencyOfRecord').val();
+        if (!currencyOfRecord) {
+            alert("Currency Of Record is required.");
+            isValid = false;
+            return;
+        }
+
+        const audienceIds = $('#audienceId').val();
+        if (!audienceIds || audienceIds.length === 0) {
+            alert("Audience must be selected.");
+            isValid = false;
+            return;
+        }
+
+        const datasourceGroupId = $('#datasourceGroupId').val();
+        if (!datasourceGroupId || datasourceGroupId.length === 0) {
+            alert("Datasource Group must be selected.");
+            isValid = false;
+            return;
+        }
+
+        const payload = {
+          "validate_only": false,
+          "name": displayName,
+          "audience_ids": audienceIds,
+          "start_date": startDate,
+          "end_date": endDate,
+          "streams": [
+            "plus7"
+          ],
+          "currency_of_record": currencyOfRecord,
+          "type": requestType,
+          "agency_advertiser_id": 3252,
+          "data_source_group_ids": datasourceGroupId,
+          "export_results": true
+        }
+
+        console.log("payload:", payload);
+        $("#loadingOverlay").show();
+        $.ajax({
+            url: '/submit-report',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(payload),
+            success: function (res) {
+                alert("Report submitted successfully!");
+                console.log("Response:", res);
+                window.location.href = "/measurement-reports";
+                $("#loadingOverlay").hide();
+            },
+            error: function (xhr, status, error) {
+                console.log("Submit failed:", error);
+                alert("Failed to submit Report.");
+                $("#loadingOverlay").hide();
+            }
+        });
+    });
+
+    function loadAudiences(currencyVal, optionVal = []) {
+        $("#loadingOverlay").show();
+        $.ajax({
+            url: '/get-audiences-by-year',
+            type: 'GET',
+            data: { currencyOfRecord: currencyVal },
+            success: function (result) {
+              const data = safeJsonParse(result).data || [];
+              const $audienceSelect = $('#audienceId');
+              $audienceSelect.empty().append('<option value="">Select Audience</option>');
+
+              data.forEach(item => {
+                if (item.audienceId && item.name) {
+                  $audienceSelect.append(new Option(item.name, item.audienceId));
+                }
+              });
+
+              if (optionVal) {
+                $audienceSelect.val(optionVal);
+              }
+
+              $("#loadingOverlay").hide();
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching data:", error);
+                $("#loadingOverlay").hide();
+            },
+            complete: function () {
+                $("#loadingOverlay").hide();
+            }
+        });
+    }
+
+    function loadDatasourceGroups(currencyVal, optionVal = []) {
+        $("#loadingOverlay").show();
+        $.ajax({
+            url: '/get-datasource-groups-by-year',
+            type: 'GET',
+            data: { currencyOfRecord: currencyVal },
+            success: function (result) {
+              const data = safeJsonParse(result).results || [];
+              const $select = $('#datasourceGroupId');
+              $select.empty().append('<option value="">Select Datasource Group</option>');
+
+              data.forEach(item => {
+                if (item.id && item.name) {
+                  $select.append(new Option(item.name, item.id));
+                }
+              });
+
+              if (optionVal) {
+                $select.val(optionVal);
+              }
+              $("#loadingOverlay").hide();
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching data:", error);
+                $("#loadingOverlay").hide();
+            },
+            complete: function () {
+                $("#loadingOverlay").hide();
+            }
+        });
+    }
+
+    $('#currencyOfRecord').on('change', function () {
+        const selectedCurrency = $(this).val();
+        loadAudiences(selectedCurrency);
+        loadDatasourceGroups(selectedCurrency);
+    });
+
+    function getReport(){
+        let params = new URLSearchParams(window.location.search);
+        let reportId = params.get('id');
+        console.log("reportId", reportId);
+
+        $("#loadingOverlay").show();
+        if(reportId){
+            $.ajax({
+                url: '/get-admeasurement',
+                type: 'GET',
+                data: {
+                reportID: reportId
+                },
+                success: function (result) {
+                    let ad = safeJsonParse(result);
+                    console.log("adMeasurementJson", ad);
+
+                    $("#displayName").val(ad.name || "");
+                    $("#requestType").val(ad.type || "");
+                    $("#startDate").val(ad.start_date || "");
+                    $("#endDate").val(ad.end_date || "");
+                    $("#currencyOfRecord").val(ad.currency_of_record || "");
+
+                    let audience_ids = ad.audience_ids || [];
+                    console.log("Setting Audience:", audience_ids);
+
+                    let data_source_group_ids = ad.data_source_group_ids || [];
+                    console.log("Setting Datasource Group:", data_source_group_ids);
+
+                    loadAudiences(ad.currency_of_record, audience_ids);
+                    loadDatasourceGroups(ad.currency_of_record, data_source_group_ids);
+
+                    $("#loadingOverlay").hide();
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error fetching data:", error);
+                    $("#loadingOverlay").hide();
+                },
+                complete: function () {
+                    $("#loadingOverlay").hide();
+                }
+            });
+        }else {
+            loadAudiences($('#currencyOfRecord').val());
+            loadDatasourceGroups($('#currencyOfRecord').val());
+            $("#loadingOverlay").hide();
+        }
+    }
+
+    getReport();
+
+    $('.select2-single').select2({ placeholder: "Select an option", allowClear: true });
+    $('.select2-multi').select2({ placeholder: "Select one or more options" });
+
+});
+</script>
+
+</body>
+</html>

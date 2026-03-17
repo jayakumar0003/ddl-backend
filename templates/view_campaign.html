@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>View Campaign</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+  <style>
+	body {
+		background-color: #f8f9fa;
+	}
+	.mt-5 {
+            margin-top: 2rem !important;
+        }
+
+	.container {
+		background-color: #fff;
+		padding: 2rem;
+		border-radius: 16px;
+		box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+	}
+
+	mt-5 {
+    margin-top: 2rem !important;
+}
+
+
+	.btn {
+		border-radius: 50px;
+		padding: 6px 20px;
+		font-weight: 500;
+	}
+
+	table.dataTable thead {
+		background-color: #0d6efd;
+		color: white;
+	}
+
+	tfoot {
+		display: none;
+	}
+
+	.back-icon {
+		font-size: 1.4rem;
+		color: #fff;
+		text-decoration: none;
+	}
+
+	.back-icon:hover {
+		color: #d1e0ff;
+	}
+
+	.page-header {
+		background-color: #0d6efd;
+		padding: 1rem 1.5rem;
+		border-radius: 10px;
+		margin-bottom: 1.5rem;
+	}
+
+	h2 {
+		font-weight: 600;
+		color: #fff;
+		font-size: 1.25rem;
+		margin: 0;
+	}
+
+	h3 {
+		font-weight: 600;
+		font-size: 1.25rem;
+		margin: 0;
+	}
+
+	.back-icon {
+		font-size: 1.2rem;
+		color: #fff;
+		text-decoration: none;
+		line-height: 1;
+	}
+
+	.select2-container .select2-selection--single,
+    .select2-container .select2-selection--multiple {
+      padding: 5px;
+    }
+
+    .loadingOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(255, 255, 255, 0.3);
+      display: flex !important;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      cursor: wait;
+      display: none;
+    }
+
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 6px solid #dbe3ff;
+      border-top: 6px solid #0d6efd;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    a i.bi {
+        transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+    a:hover i.bi {
+        transform: scale(1.2);
+        opacity: 0.8;
+    }
+
+    .dataTables_wrapper .dataTables_length {
+            display: none; /* hide Show entries dropdown */
+        }
+
+        .dataTables_wrapper .dataTables_filter {
+            float: left !important; /* move search box to left */
+        }
+
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+  <div class="page-header d-flex justify-content-between align-items-center">
+
+    <div class="d-flex align-items-center">
+        <a href="/campaigns" class="me-3 back-icon">
+            <i class="bi bi-arrow-left-circle-fill"></i>
+        </a>
+        <h2>View Campaign</h2>
+    </div>
+  </div>
+
+  <form>
+     <div class="mb-3">
+      <label for="CampaignName" class="form-label">Campaign Name</label>
+      <input type="text" class="form-control" id="CampaignName" placeholder="" disabled>
+    </div>
+     <div class="mb-3">
+      <label for="StartDate" class="form-label">Start Date</label>
+      <input type="text" class="form-control" id="StartDate" placeholder="" disabled>
+    </div>
+    <div class="mb-3">
+      <label for="EndDate" class="form-label">End Date</label>
+      <input type="text" class="form-control" id="EndDate" placeholder="" disabled>
+    </div>
+     <div class="mb-3">
+      <label for="CurrencyOfRecord" class="form-label">Currency of Record</label>
+      <input type="text" class="form-control" id="CurrencyOfRecord" placeholder="" disabled>
+    </div>
+    <div class="mb-3">
+      <label for="Status" class="form-label">Status</label>
+      <input type="text" class="form-control" id="Status" placeholder="" disabled>
+    </div>
+
+      <div>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <!-- Left: Plans title -->
+            <div class="d-flex align-items-center">
+                <h3 class="mb-0">Plans</h3>
+            </div>
+
+            <!-- Right: Buttons -->
+            <div>
+                <button type="button" class="btn btn-primary"
+                        onclick="window.location='/create-plan'">
+                    Create Plan
+                </button>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+        <table id="planTable" class="display table table-striped" style="width:100%">
+            <thead>
+                <tr>
+                   <th>ID</th>
+                    <th>Name</th>
+                    <th>Budget</th>
+                    <th>Created On</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td colspan="6" class="text-center">Fetching data, Please wait...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+      </div>
+  </form>
+</div>
+
+<div class="modal fade" id="planModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Reach Info</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-2">
+            <div class="col-4 fw-bold py-1">Plan Name:</div>
+            <div class="col-8" id="modalPlanName"></div>
+        </div>
+        <div class="row" style="padding:0 10px;">
+            <table id="reachTable" class="display table table-striped" style="width:100%">
+            <!--<thead>
+                <tr>
+                    <th>Metric</th>
+                    <th>Total</th>
+                </tr>
+            </thead>-->
+            <tbody>
+                <tr><td colspan="2" class="text-center">Fetching reach, Please wait...</td></tr>
+            </tbody>
+            </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <br/>
+<div id="loadingOverlay">
+  <div class="loadingOverlay">
+    <div class="text-center">
+      <div class="spinner"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+let params = new URLSearchParams(window.location.search);
+let campaignId = params.get('id');
+console.log("campaignId", campaignId);
+
+
+$(document).ready(function () {
+   function safeJsonParse(str) {
+        try {
+          return typeof str === "string" ? JSON.parse(str) : str;
+        } catch (e) {
+          console.error("JSON parse error:", e);
+          return {};
+        }
+    }
+
+    function getData(){
+        $("#loadingOverlay").show();
+        if(campaignId){
+            $.ajax({
+                url: '/get-campaign',
+                type: 'GET',
+                data: {
+                ID: campaignId
+                },
+                success: function (result) {
+                    console.log("result", result);
+                    let cp = safeJsonParse(result);
+                    console.log("cp", cp);
+
+                    $("#CampaignName").val(cp.display_name || "");
+                    $("#StartDate").val(cp.media_start_date || "");
+                    $("#EndDate").val(cp.media_end_date || "");
+                    $("#CurrencyOfRecord").val(cp.currency_of_record || "");
+                    $("#Status").val(cp.status || "");
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error fetching data:", error);
+                    $("#loadingOverlay").hide();
+                },
+                complete: function () {
+                    //$("#loadingOverlay").hide();
+                }
+            });
+
+            $.ajax({
+                url: '/get-campaign-plans',
+                type: 'GET',
+                data: {
+                campaignId: campaignId
+                },
+                success: function (result) {
+                    let resultJson = JSON.parse(result);
+                    console.log("resultJson", resultJson);
+                    let data = resultJson.results;
+                    data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                    console.log("data", data);
+                    let rows = '';
+                    $.each(data, function (index, item) {
+                        rows += `<tr>
+                            <td>${item.id}</td>
+                            <td>${item.display_name}</td>
+                            <td>${item.budget}</td>
+                            <td>${item.created_at}</td>
+                            <td>${item.status}</td>
+                            <td>
+                                <div class="dropdown">
+                                    <a href="#" class="text-dark" data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots-vertical fs-4"></i>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        ${item.status == 'READY' ?
+                                         `<li><a class="dropdown-item" href="#" onclick="fnShowModel('${item.id}', '${item.display_name}')" title="View">
+                                                 <i class="bi bi-eye me-2"></i> View
+                                            </a></li>
+                                            <li><a class="dropdown-item" href="#" onclick="fnDownload('${item.id}')" title="Download">
+                                                 <i class="bi bi-download me-2"></i> Download
+                                            </a></li>`
+                                         : ''}
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <a class="dropdown-item text-danger" href="#" onclick="fnDelete('${item.id}')">
+                                               <i class="bi bi-trash me-2"></i> Delete
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>`;
+                    });
+                    $('#planTable tbody').html(rows);
+                    $('#planTable').DataTable({destroy: true, order: [[3, 'desc']]});
+                    $("#loadingOverlay").hide();
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error fetching data:", error);
+                    $("#loadingOverlay").hide();
+                }
+            });
+        }
+    }
+
+    getData();
+
+    //$('.select2-single').select2({ placeholder: "Select an option", allowClear: true });
+   // $('.select2-multi').select2({ placeholder: "Select one or more options" });
+
+});
+
+    function fnShowModel(id, name) {
+        console.log("id", id, "name", name);
+        $('#modalPlanName').text(name);
+        $('#reachTable tbody').html('<tr><td colspan="2" class="text-center">Fetching reach, Please wait...</td></tr>');
+        fnGetReach(id);
+        const modal = new bootstrap.Modal(document.getElementById('planModal'));
+        modal.show();
+    }
+
+    function fnDownload(id) {
+        console.log("id", id);
+        $("#loadingOverlay").show();
+        $.ajax({
+            url: '/get-plan',
+            type: 'GET',
+            data: {
+            planId: id
+            },
+            success: function (result) {
+                let resultJson = JSON.parse(result);
+                console.log("resultJson", resultJson);
+                const link = resultJson?.output?.values?.[0];
+                if (link) {
+                    window.open(link, '_blank');
+                } else {
+                    alert("No download link available for this report.");
+                }
+
+                $("#loadingOverlay").hide();
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching data:", error);
+                $("#loadingOverlay").hide();
+            },
+            complete: function () {
+                $("#loadingOverlay").hide();
+            }
+        });
+    }
+
+    function fnGetReach(id) {
+        $("#loadingOverlay").show();
+        $.ajax({
+            url: '/get-reach',
+            type: 'GET',
+            data: { planId: id },
+            success: function (response) {
+                let reachData = typeof response === "string" ? JSON.parse(response) : response;
+                console.log("reachData", reachData);
+                let rows = '';
+                $.each(reachData, function (index, item) {
+                    rows += `<tr>
+                        <td>${item.Metric}</td>
+                        <td>${item.Total}</td>
+                    </tr>`;
+                });
+                $('#reachTable tbody').html(rows);
+
+                $("#loadingOverlay").hide();
+            },
+            error: function (xhr, status, error) {
+              console.error("Error fetching reach:", error);
+              $("#loadingOverlay").hide();
+            }
+        });
+    }
+
+    function fnDelete(id) {
+        if (confirm("Are you sure you want to delete this plan?")) {
+            console.log("Delete plan id:", id);
+
+            $("#loadingOverlay").show();
+            $.ajax({
+                url: '/delete-plan',
+                type: 'GET',
+                data: {
+                planID: id
+                },
+                success: function (result) {
+                    //let resultJson = JSON.parse(result);
+                    //console.log("resultJson", resultJson);
+                    $("#loadingOverlay").hide();
+
+                    alert("Plan deleted successfully.");
+
+                    let table = $('#planTable').DataTable();
+                    table
+                        .rows(function (idx, data, node) {
+                            return data[0] === id;
+                        })
+                        .remove()
+                        .draw();
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error deleting the report:", error);
+                    $("#loadingOverlay").hide();
+                },
+                complete: function () {
+                    $("#loadingOverlay").hide();
+                }
+            });
+        }
+    }
+</script>
+
+</body>
+</html>

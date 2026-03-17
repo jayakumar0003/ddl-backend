@@ -1,0 +1,75 @@
+# =========================
+# Python cache
+# =========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# =========================
+# Virtual Environment
+# =========================
+venv/
+env/
+ENV/
+.venv/
+
+# =========================
+# Environment variables
+# =========================
+.env
+.env.*
+
+# =========================
+# Flask specific
+# =========================
+instance/
+.webassets-cache
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# SQLite database (if used locally)
+# =========================
+*.sqlite3
+*.db
+
+# =========================
+# Distribution / packaging
+# =========================
+build/
+dist/
+*.egg-info/
+
+# =========================
+# VS Code / IDE
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Testing / coverage
+# =========================
+.coverage
+htmlcov/
+.pytest_cache/
+
+# =========================
+# Jupyter Notebook
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# Node (if React inside Flask project)
+# =========================
+node_modules/
+
+.module/

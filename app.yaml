@@ -1,0 +1,5 @@
+runtime: python310
+
+service: ddlscheduler-uiservice
+
+entrypoint: gunicorn -b :$PORT app:app

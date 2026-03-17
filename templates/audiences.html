@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Audiences</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .mt-5 {
+            margin-top: 2rem !important;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+        }
+
+        h2 {
+            font-weight: 600;
+            color: #fff;
+            margin: 0;
+        }
+
+        .dataTables_wrapper .dataTables_length {
+            display: none; /* hide Show entries dropdown */
+        }
+
+        .dataTables_wrapper .dataTables_filter {
+            float: left !important; /* move search box to left */
+        }
+
+        .btn {
+            border-radius: 50px;
+            padding: 6px 20px;
+            font-weight: 500;
+        }
+
+        table.dataTable thead {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        tfoot {
+            display: none;
+        }
+
+        .back-icon {
+            font-size: 1.4rem;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .back-icon:hover {
+            color: #d1e0ff;
+        }
+
+        .page-header {
+            background-color: #0d6efd;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+		.page-header {
+    background-color: #0d6efd;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+}
+
+h2 {
+    font-weight: 600;
+    color: #fff;
+    font-size: 1.25rem;
+    margin: 0;
+}
+
+.back-icon {
+    font-size: 1.2rem;
+    color: #fff;
+    text-decoration: none;
+    line-height: 1;
+}
+
+    .loadingOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(255, 255, 255, 0.3);
+      display: flex !important;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      cursor: wait;
+      display: none;
+    }
+
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 6px solid #dbe3ff;
+      border-top: 6px solid #0d6efd;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    a i.bi {
+        transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+    a:hover i.bi {
+        transform: scale(1.2);
+        opacity: 0.8;
+    }
+    </style>
+</head>
+<body>
+
+<div class="container mt-5">
+    <div class="page-header d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center">
+            <a href="/" class="me-3 back-icon"><i class="bi bi-arrow-left-circle-fill"></i></a>
+            <h2>Audiences</h2>
+        </div>
+        <div>
+            <button class="btn btn-light" onclick="window.location='/demographic-audiences'">VideoAmp Demographic Audiences</button>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label for="audienceName" class="form-label">Search (Name or Description)</label>
+            <input id="audienceName" type="text" class="form-control" placeholder="">
+        </div>
+
+        <div class="col-md-4">
+            <label for="currencyOfRecord" class="form-label">Currency of Record</label>
+            <input id="currencyOfRecord" type="text" class="form-control" placeholder="">
+        </div>
+
+        <div class="col-md-4">
+            <label for="status" class="form-label">Status</label>
+            <select id="status" class="form-select">
+              <option value="">All</option>
+              <option value="ready">Ready</option>
+              <option value="failed">Failed</option>
+              <option value="processing">Processing</option>
+              <option value="draft">Draft</option>
+            </select>
+        </div>
+    </div>
+   <div class="row mb-3">
+        <div class="col text-end">
+            <button id="btnApply" class="btn btn-primary me-2">
+                <i class="bi bi-funnel-fill"></i> Apply
+            </button>
+            <button id="btnClear" class="btn btn-outline-secondary">
+                <i class="bi bi-x-circle"></i> Clear
+            </button>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table id="audienceTable" class="display table table-striped" style="width:100%">
+            <thead>
+                <tr>
+                   <th>ID</th>
+                    <th>Name</th>
+                    <th>Audience Type</th>
+                    <th>Level</th>
+                    <th>Currency Of Record</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+             <tbody>
+                <tr><td colspan="6" class="text-center">Fetching data, Please wait...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="loadingOverlay">
+  <div class="loadingOverlay">
+    <div class="text-center">
+      <div class="spinner"></div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function fnView(id) {
+        window.location = "/view-audience?id=" + id;
+    }
+
+    function loadAudiences() {
+        $("#loadingOverlay").show();
+
+        const filters = {
+            audienceName: $('#audienceName').val(),
+            type: "advanced",
+            currencyOfRecord: $('#currencyOfRecord').val(),
+            status: $('#status').val()
+        };
+
+        $.ajax({
+            url: '/get-audiences',
+            type: 'GET',
+            data: filters,
+            success: function (result) {
+                let resultJson = JSON.parse(result);
+                console.log("resultJson", resultJson);
+                let data = resultJson.data;
+                console.log("data", data);
+
+                if ($.fn.DataTable.isDataTable('#audienceTable')) {
+                    $('#audienceTable').DataTable().destroy();
+                }
+
+               $('#audienceTable tbody').empty();
+
+                let rows = '';
+                $.each(data, function (index, item) {
+                    rows += `<tr>
+                        <td>${item.audienceId}</td>
+                        <td>${item.name}</td>
+                        <td>${item.audienceType}</td>
+                        <td>${item.level}</td>
+                        <td>${item.currencyOfRecord}</td>
+                        <td>${item.status}</td>
+                        <td>
+                            <div class="dropdown">
+                                <a href="#" class="text-dark" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical fs-4"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                  <li>
+                                        <a class="dropdown-item" href="#" onclick="fnView('${item.audienceId}')">
+                                            <i class="bi bi-eye me-2"></i> View
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>`;
+                });
+                $('#audienceTable tbody').html(rows);
+                $('#audienceTable').DataTable(
+                {
+                    destroy: true,
+                    order: [[1, 'desc']],
+                    searching: false
+                });
+                $("#loadingOverlay").hide();
+            },
+            error: function (xhr, status, error) {
+                $("#loadingOverlay").hide();
+                console.error("Error fetching data:", error);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        loadAudiences();
+
+        $('#btnApply').on('click', function () {
+            loadAudiences();
+        });
+
+        $('#btnClear').on('click', function () {
+            $('#audienceName').val('');
+            $('#audienceLevel').val('');
+            $('#currencyOfRecord').val('');
+            $('#status').val('');
+            loadAudiences();
+        });
+    });
+</script>
+
+</body>
+</html>

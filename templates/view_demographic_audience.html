@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>View Audience</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+  <style>
+	body {
+		background-color: #f8f9fa;
+	}
+	.mt-5 {
+            margin-top: 2rem !important;
+        }
+
+	.container {
+		background-color: #fff;
+		padding: 2rem;
+		border-radius: 16px;
+		box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+	}
+
+	mt-5 {
+    margin-top: 2rem !important;
+}
+
+
+	.btn {
+		border-radius: 50px;
+		padding: 6px 20px;
+		font-weight: 500;
+	}
+
+	table.dataTable thead {
+		background-color: #0d6efd;
+		color: white;
+	}
+
+	tfoot {
+		display: none;
+	}
+
+	.back-icon {
+		font-size: 1.4rem;
+		color: #fff;
+		text-decoration: none;
+	}
+
+	.back-icon:hover {
+		color: #d1e0ff;
+	}
+
+	.page-header {
+		background-color: #0d6efd;
+		padding: 1rem 1.5rem;
+		border-radius: 10px;
+		margin-bottom: 1.5rem;
+	}
+
+	h2 {
+		font-weight: 600;
+		color: #fff;
+		font-size: 1.25rem;
+		margin: 0;
+	}
+
+	.back-icon {
+		font-size: 1.2rem;
+		color: #fff;
+		text-decoration: none;
+		line-height: 1;
+	}
+
+	.select2-container .select2-selection--single,
+    .select2-container .select2-selection--multiple {
+      padding: 5px;
+    }
+
+    .loadingOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(255, 255, 255, 0.3);
+      display: flex !important;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      cursor: wait;
+      display: none;
+    }
+
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 6px solid #dbe3ff;
+      border-top: 6px solid #0d6efd;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    a i.bi {
+        transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+    a:hover i.bi {
+        transform: scale(1.2);
+        opacity: 0.8;
+    }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+  <div class="page-header d-flex justify-content-between align-items-center">
+
+    <div class="d-flex align-items-center">
+        <a href="/demographic-audiences" class="me-3 back-icon">
+            <i class="bi bi-arrow-left-circle-fill"></i>
+        </a>
+        <h2>View Demographic Audience</h2>
+    </div>
+  </div>
+
+  <form>
+     <div class="mb-3">
+      <label for="ID" class="form-label">ID</label>
+      <input type="text" class="form-control" id="ID" placeholder="" disabled>
+    </div>
+    <div class="mb-3">
+      <label for="UUID" class="form-label">UUID</label>
+      <input type="text" class="form-control" id="UUID" placeholder="" disabled>
+    </div>
+     <div class="mb-3">
+      <label for="Name" class="form-label">Name</label>
+      <input type="text" class="form-control" id="Name" placeholder="" disabled>
+    </div>
+    <div class="mb-3">
+      <label for="Description" class="form-label">Description</label>
+      <input type="text" class="form-control" id="Description" placeholder="" disabled>
+    </div>
+     <div class="mb-3">
+      <label for="Footprint" class="form-label">Footprint</label>
+      <input type="text" class="form-control" id="Footprint" placeholder="" disabled>
+    </div>
+    <div class="mb-3">
+      <label for="Status" class="form-label">Status</label>
+      <input type="text" class="form-control" id="Status" placeholder="" disabled>
+    </div>
+     <div class="mb-3">
+      <label for="CreatedAt" class="form-label">Created At</label>
+      <input type="text" class="form-control" id="CreatedAt" placeholder="" disabled>
+    </div>
+    <div class="mb-3">
+      <label for="UniverseEstimate" class="form-label">Universe Estimate</label>
+      <input type="text" class="form-control" id="UniverseEstimate" placeholder="" disabled>
+    </div>
+    <div class="mb-3">
+      <label for="VideoAmpHousehold" class="form-label">VideoAmp Household</label>
+      <input type="text" class="form-control" id="VideoAmpHousehold" placeholder="" disabled>
+    </div>
+  </form>
+
+</div>
+  <br/>
+<div id="loadingOverlay">
+  <div class="loadingOverlay">
+    <div class="text-center">
+      <div class="spinner"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+
+let params = new URLSearchParams(window.location.search);
+let audienceId = params.get('id');
+console.log("audienceId", audienceId);
+
+
+$(document).ready(function () {
+   function safeJsonParse(str) {
+        try {
+          return typeof str === "string" ? JSON.parse(str) : str;
+        } catch (e) {
+          console.error("JSON parse error:", e);
+          return {};
+        }
+    }
+
+    function getData(){
+        $("#loadingOverlay").show();
+        if(audienceId){
+            $.ajax({
+                url: '/get-audience',
+                type: 'GET',
+                data: {
+                ID: audienceId
+                },
+                success: function (result) {
+                    let au = safeJsonParse(result);
+                    console.log("au", au);
+
+                    $("#ID").val(au.audienceId || "");
+                    $("#UUID").val(au.audienceUUId || "");
+                    $("#Name").val(au.name || "");
+                    $("#Description").val(au.description || "");
+                    $("#Footprint").val(au.currencyOfRecord || "");
+                    $("#Status").val(au.status || "");
+                    $("#CreatedAt").val(au.createdAt || "");
+                    $("#UniverseEstimate").val(au.metrics?.universeEstimate || "");
+                    $("#VideoAmpHousehold").val(au.metrics?.videoAmpHouseHolds || "");
+                    $("#loadingOverlay").hide();
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error fetching data:", error);
+                    $("#loadingOverlay").hide();
+                },
+                complete: function () {
+                    $("#loadingOverlay").hide();
+                }
+            });
+        }
+    }
+
+    getData();
+
+    $('.select2-single').select2({ placeholder: "Select an option", allowClear: true });
+    $('.select2-multi').select2({ placeholder: "Select one or more options" });
+
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Datasource Group</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+  <style>  
+	body {
+		background-color: #f8f9fa;
+	}
+	.mt-5 {
+            margin-top: 2rem !important;
+        }
+
+	.container {
+		background-color: #fff;
+		padding: 2rem;
+		border-radius: 16px;
+		box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+	}
+	
+	mt-5 {
+    margin-top: 2rem !important;
+}
+
+	h2 {
+		font-weight: 600;
+		color: #fff;
+		margin: 0;
+	}      
+
+	.btn {
+		border-radius: 50px;
+		padding: 6px 20px;
+		font-weight: 500;
+	}
+
+	table.dataTable thead {
+		background-color: #0d6efd;
+		color: white;
+	}
+
+	tfoot {
+		display: none;
+	}
+
+	.back-icon {
+		font-size: 1.4rem;
+		color: #fff;
+		text-decoration: none;
+	}
+
+	.back-icon:hover {
+		color: #d1e0ff;
+	}
+
+	.page-header {
+		background-color: #0d6efd;
+		padding: 1rem 1.5rem;
+		border-radius: 10px;
+		margin-bottom: 1.5rem;
+	}
+
+	.page-header {
+		background-color: #0d6efd;
+		padding: 0.5rem 1rem;
+		border-radius: 10px;
+		margin-bottom: 1.5rem;
+	}
+
+	h2 {
+		font-weight: 600;
+		color: #fff;
+		font-size: 1.25rem;
+		margin: 0;
+	}
+
+	.back-icon {
+		font-size: 1.2rem;
+		color: #fff;
+		text-decoration: none;
+		line-height: 1;
+	}
+
+	.select2-container .select2-selection--single,
+    .select2-container .select2-selection--multiple {
+      padding: 5px;
+    }
+
+    .loadingOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(255, 255, 255, 0.3);
+      display: flex !important;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      cursor: wait;
+      display: none;
+    }
+
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 6px solid #dbe3ff;
+      border-top: 6px solid #0d6efd;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    a i.bi {
+        transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+    a:hover i.bi {
+        transform: scale(1.2);
+        opacity: 0.8;
+    }
+
+  /*.select2-selection__rendered {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+  }*/
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+  <div class="page-header d-flex justify-content-between align-items-center">
+	<div class="d-flex align-items-center">
+		<a href="/datasource-groups" class="me-3 back-icon"><i class="bi bi-arrow-left-circle-fill"></i></a>
+		<h2>Create Datasource Group</h2>
+	</div>
+</div>
+
+  <form>    
+    <div class="mb-3">
+      <label for="displayName" class="form-label">Name</label>
+      <input type="text" class="form-control" id="displayName" placeholder="">
+    </div>
+
+    <div class="mb-3">
+      <label for="description" class="form-label">Description</label>
+      <input type="text" class="form-control" id="description" placeholder="">
+    </div>
+
+    <div class="mb-3">
+      <label for="startDate" class="form-label">Start Date</label>
+     <input type="date" class="form-control" id="startDate" >
+    </div>
+
+    <div class="mb-3">
+      <label for="endDate" class="form-label">End Date</label>
+     <input type="date" class="form-control" id="endDate" >
+    </div>
+
+    <div class="mb-3">
+      <label for="currencyOfRecord" class="form-label">Currency Of Record *</label>
+      <select id="currencyOfRecord" class="form-select">
+          <option value="25">2024-25 Currency</option>
+          <option value="26">2025-26 Currency</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="dsFilterIds" class="form-label">Post Log File Name</label>
+      <select id="dsFilterIds" class="form-select select2-multi" multiple >
+      </select>
+    </div>
+
+
+    <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
+  </form>
+
+</div>
+  <br/>
+<div id="loadingOverlay">
+  <div class="loadingOverlay">
+    <div class="text-center">
+      <div class="spinner"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+$(document).ready(function () {
+    function safeJsonParse(str) {
+        try {
+          return typeof str === "string" ? JSON.parse(str) : str;
+        } catch (e) {
+          console.error("JSON parse error:", e);
+          return {};
+        }
+    }
+
+  $('form').on('submit', function (e) {
+    e.preventDefault();
+
+    let isValid = true;
+
+    const displayName = $('#displayName').val().trim();
+    if (!displayName) {
+        alert("Name is required.");
+        isValid = false;
+        return;
+    }
+
+    const description = $('#description').val().trim();
+    if (!description) {
+        alert("Description is required.");
+        isValid = false;
+        return;
+    }
+
+    const startDate = $('#startDate').val().trim();
+    if (!startDate) {
+        alert("Start Date is required.");
+        isValid = false;
+        return;
+    }
+
+    const endDate = $('#endDate').val().trim();
+    if (!endDate) {
+        alert("End Date is required.");
+        isValid = false;
+        return;
+    }
+
+    const currencyOfRecord = $('#currencyOfRecord').val();
+    if (!currencyOfRecord) {
+        alert("Currency Of Record is required.");
+        isValid = false;
+        return;
+    }
+
+    const dsFilterIds = $('#dsFilterIds').val();
+    if (!dsFilterIds || dsFilterIds.length === 0) {
+        alert("Datasource Filter must be selected.");
+        return;
+    }
+
+
+    const payload = {
+      "advertiser_id": "8b31df08-da77-4d44-b415-8b22ab387704",
+      "display_name": displayName,
+      "description": description,
+      "currency_of_record": currencyOfRecord,
+      "reporting_scope": "AD_MEASUREMENT",
+      "datasources": [
+        {
+          "datasource_type": "FIRST_PARTY_AD_SCHEDULE",
+          "filters": [
+            {
+              "name": "platform_file_guid",
+              "values": dsFilterIds
+            }
+          ]
+        }
+      ],
+      "data_latency": "FINAL",
+      "filter_start_date": startDate,
+      "filter_end_date": endDate
+    };
+
+    console.log("payload:", payload);
+    $("#loadingOverlay").show();
+    $.ajax({
+        url: '/submit-datasource-group',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(payload),
+        success: function (res) {
+            alert("Datasource Group created successfully!");
+            console.log("Response:", res);
+            window.location.href = "/datasource-groups";
+            $("#loadingOverlay").hide();
+        },
+        error: function (xhr, status, error) {
+            console.log("Submit failed:", error);
+            alert("Failed to submit Report.");
+            $("#loadingOverlay").hide();
+        }
+    });
+});
+
+
+    function loadDatasourceFilters(startDate, endDate, optionVal = []) {
+        $("#loadingOverlay").show();
+        let payload = {
+          "advertiser_id": "8b31df08-da77-4d44-b415-8b22ab387704",
+          "datasource_type": "FIRST_PARTY_AD_SCHEDULE",
+          "datasource_filter_name": "platform_file_guid",
+          "start_date": startDate,
+          "end_date": endDate,
+          "applied_filters": []
+        }
+
+        console.log("payload", payload);
+        $.ajax({
+            url: '/get-datasource-filters',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(payload),
+            success: function (result) {
+              console.log("result", result);
+              const data = safeJsonParse(result).results || [];
+              const $select = $('#dsFilterIds');
+              $select.empty().append('<option value="">Select</option>');
+
+              data.forEach(item => {
+                if (item.label && item.value) {
+                  $select.append(new Option(item.label, item.value));
+                }
+              });
+
+              if (optionVal) {
+                $select.val(optionVal);
+              }
+
+              $("#loadingOverlay").hide();
+            },
+            error: function (xhr, status, error) {
+              console.log("failed:", error);
+              $("#loadingOverlay").hide();
+           }
+        });
+    }
+
+    $('#startDate').on('change', function () {
+        const startDate = $('#startDate').val().trim();
+        const endDate = $('#endDate').val().trim();
+        if (startDate && endDate) {
+          loadDatasourceFilters(startDate, endDate);
+        }
+    });
+
+    $('#endDate').on('change', function () {
+        const startDate = $('#startDate').val().trim();
+        const endDate = $('#endDate').val().trim();
+        if (startDate && endDate) {
+          loadDatasourceFilters(startDate, endDate);
+        }
+    });
+
+    function getDatasourceGroup(){
+        let params = new URLSearchParams(window.location.search);
+        let datasourceGroupId = params.get('id');
+        console.log("datasourceGroupId", datasourceGroupId);
+
+        $("#loadingOverlay").show();
+        if(datasourceGroupId){
+            $.ajax({
+                url: '/get-datasource-group',
+                type: 'GET',
+                data: {
+                ID: datasourceGroupId
+                },
+                success: function (result) {
+                    let ds = safeJsonParse(result);
+                    console.log("datasource", ds);
+
+                    $("#displayName").val(ds.name || "");
+                    $("#description").val(ds.description || "");
+                    $("#startDate").val(ds.filter_start_date || "");
+                    $("#endDate").val(ds.filter_end_date || "");
+                    $("#currencyOfRecord").val(ds.currency_of_record || "");
+
+
+                    //let postLogFileId = ds.datasources[0]?.filters[0]?.values[0];
+                    //console.log("postLogFileId:", postLogFileId);
+                    //loadDatasourceFilters(ds.filter_start_date, ds.filter_end_date, postLogFileId);
+
+                    let postLogFileIds = ds.datasources[0]?.filters[0]?.values || [];
+                    loadDatasourceFilters(ds.filter_start_date, ds.filter_end_date, postLogFileIds);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error fetching data:", error);
+                    $("#loadingOverlay").hide();
+                },
+                complete: function () {
+                    //$("#loadingOverlay").hide();
+                }
+            });
+        }else{
+          $("#loadingOverlay").hide();
+        }
+    }
+
+    getDatasourceGroup();
+
+    $('.select2-single').select2({ placeholder: "Select an option", allowClear: true });
+    $('.select2-multi').select2({ placeholder: "Select one or more options" });
+
+});
+</script>
+
+</body>
+</html>

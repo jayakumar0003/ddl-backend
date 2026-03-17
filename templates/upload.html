@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSV Upload</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .backdrop {
+            background-color: rgba(255, 255, 255, 0.8); /* White with 80% opacity */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-4">
+    <!-- Home Button -->
+    <a href="/" class="btn btn-primary mb-3">Home</a>
+    <div class="container mt-5 backdrop">
+        <h1 class="display-4 text-center">
+            VideoAmp File Upload
+        </h1>
+
+        <p class="lead text-center spacing-top">Please upload a CSV with the following columns:</p> <br>
+        <table class="table table-bordered table-striped table-font">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Column Name</th>
+                    <th>Type</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>title_id</td>
+                    <td>String</td>
+                </tr>
+                <tr>
+                    <td>title_name</td>
+                    <td>String</td>
+                </tr>
+                <tr>
+                    <td>va_network</td>
+                    <td>String</td>
+                </tr>
+                <tr>
+                    <td>display_name</td>
+                    <td>String</td>
+                </tr>
+                <tr>
+                    <td>platform</td>
+                    <td>String</td>
+                </tr>
+                <tr>
+                    <td>daypart</td>
+                    <td>String</td>
+                </tr>
+                <tr>
+                    <td>cost_per_unit</td>
+                    <td>Float</td>
+                </tr>
+                <tr>
+                    <td>impressions_per_unit</td>
+                    <td>Float</td>
+                </tr>
+                <tr>
+                    <td>cpm</td>
+                    <td>Float</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p class="lead text-center spacing-top">
+            Here is a link to what your sheet must look like: 
+            <a href="#">sheet here</a>
+        </p>
+
+        <!-- File Input -->
+        <div class="custom-file mb-3">
+            <input type="file" class="custom-file-input" id="csvFileInput" multiple>
+            <label class="custom-file-label" for="csvFileInput">Choose CSV files</label>
+        </div>
+        
+        <!-- Upload Button -->
+        <button onclick="uploadFiles()" class="btn btn-success mr-2">Upload</button>
+    <br>
+    </div>
+    
+    <!-- Content Area -->
+    <div id="content" class="mt-4"></div>
+    
+    <!-- Upload Status Area -->
+    <ul id="upload-status" class="list-group mt-4"></ul>
+    <!-- Content Area -->
+    <div id='content' class="mt-4"></div>
+</div>
+
+<!-- Include Bootstrap JS and its dependencies -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<!-- Include Socket.IO -->
+<script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        $('.custom-file-input').on('change', function() {
+            let files = Array.from(this.files).map(file => file.name).join(', ');
+            $(this).next('.custom-file-label').addClass("selected").html(files);
+        });
+    });
+
+    function uploadFiles() {
+        
+        // clear status messages each run
+        var contentName = document.getElementById('content');
+        contentName.innerHTML = '';
+
+        var statusList = document.getElementById('upload-status');
+        statusList.innerHTML = '';
+
+        var fileInput = document.getElementById('csvFileInput');
+        var files = fileInput.files;
+        var formData = new FormData();
+
+        for (let i = 0; i < files.length; i++) {
+            formData.append('files[]', files[i]);
+        }
+
+        var statusList = document.getElementById('upload-status');
+
+        fetch('/upload-csv', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if (data.success) {
+                contentName.innerHTML = 'Files successfully uploaded.';
+            } else {
+                contentName.innerHTML = 'Error: ' + (data.error || 'Unknown error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            contentName.innerHTML = 'Failed to upload files. Error: ' + error;
+        });
+    }
+
+    // Initialize Socket.IO
+    const socket = io();
+
+    // Handle real-time updates
+    socket.on('update', function(data) {
+        const statusList = document.getElementById('upload-status');
+        const newItem = document.createElement('li');
+        newItem.classList.add('list-group-item');
+        newItem.textContent = `File: ${data.file} - Status: ${data.status} (step ${data.index}/${data.total})`;
+        statusList.appendChild(newItem);
+    });
+</script>
+</body>
+</html>

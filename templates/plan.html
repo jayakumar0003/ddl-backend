@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan a Campaign</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-control {
+            border-radius: 0.25rem;
+            padding: 0.75rem 1rem;
+        }
+        .button-custom {
+            font-size: 18px; /* Make the text bigger */
+            font-weight: bold; /* Make the text bold */
+            text-align: center !important; /* Center the text */
+            width: 100%; /* Ensure the button spans its container */
+            display: inline-block !important; /* Inline-block to prevent overflow issues */
+            padding: 10px 20px; /* Add padding to increase button size */
+        }
+
+        .spacing-top {
+            margin-top: 30px;
+        }
+
+        .right-align {
+            text-align: right; /* Align text inside the element to the right */
+            display: block;    /* Ensure it takes up the full width */
+        }
+
+        .container {
+            max-width: none !important; /* Remove Bootstrap's max-width limitation */
+            width: 100% !important; /* Make the container full width */
+        }
+
+        .backdrop {
+            background-color: rgba(255, 255, 255, 0.8); /* White with 80% opacity */
+            padding: 20px;
+            border-radius: 10px;
+            width: 2050px !important;
+        }
+
+        .autocomplete {
+        /*the container must be positioned relative:*/
+        position: relative;
+        display: inline-block;
+        }
+        input {
+        border: 1px solid transparent;
+        background-color: #f1f1f1;
+        padding: 10px;
+        font-size: 16px;
+        }
+        input[type=text] {
+        background-color: #f1f1f1;
+        width: 100%;
+        }
+        input[type=submit] {
+        background-color: DodgerBlue;
+        color: #fff;
+        }
+        .autocomplete-items {
+        position: absolute;
+        border: 1px solid #d4d4d4;
+        border-bottom: none;
+        border-top: none;
+        z-index: 99;
+        /*position the autocomplete items to be the same width as the container:*/
+        top: 100%;
+        left: 0;
+        right: 0;
+        }
+        .autocomplete-items div {
+        padding: 10px;
+        cursor: pointer;
+        background-color: #fff;
+        border-bottom: 1px solid #d4d4d4;
+        }
+        .autocomplete-items div:hover {
+        /*when hovering an item:*/
+        background-color: #e9e9e9;
+        }
+        .autocomplete-active {
+        /*when navigating through the items using the arrow keys:*/
+        background-color: DodgerBlue !important;
+        color: #ffffff;
+        }
+        .autocomplete-cell {
+            position: relative;
+        }
+
+        .main-table th:nth-child(1),
+        .main-table td:nth-child(1) {
+            width: 300px !important;
+        }
+
+        .main-table th:nth-child(3),
+        .main-table td:nth-child(3) {
+            width: 150px !important;
+        }
+        
+        .main-table th:nth-child(2),
+        .main-table td:nth-child(2) {
+            width: 300px !important;
+        }
+
+        .main-table th:nth-child(13),
+        .main-table td:nth-child(13) {
+            width: 120px !important;  /* Total Cost column - increased width */
+        }
+
+        #table-container-tab2, #table-container {
+            overflow-x: auto;
+            width: 100%;
+        }
+        
+        .table-scroll-wrapper {
+            overflow-x: auto;
+            width: 100%;
+        }
+        
+        .main-table {
+            table-layout: fixed;
+            width: max-content;
+            min-width: 100%;
+        }
+
+         /* Sticky first two columns */
+        .main-table th:nth-child(1),
+        .main-table td:nth-child(1) {
+            position: sticky;
+            left: 0;
+            background-color: white;
+            z-index: 10;
+        }
+        
+        .main-table th:nth-child(2),
+        .main-table td:nth-child(2) {
+            position: sticky;
+            left: 300px;  /* Width of first column */
+            background-color: white;
+            z-index: 10;
+        }
+        
+        .main-table thead th:nth-child(1),
+        .main-table thead th:nth-child(2) {
+            background-color: #f8f9fa;
+            z-index: 11;
+        }
+
+    </style>
+
+   
+
+</head>
+<body style="background-color: #f8f9fa;">
+    <div class="container mt-4 wider-container">
+        <!-- Home Button -->
+        <a href="/" class="btn btn-primary mb-3">Home</a>
+        <div class="container mt-5 backdrop">
+            <h1 class="display-4 text-center">Plan a Campaign</h1>
+            <p class="lead text-center spacing-top">Below are the available VideoAmp datasets. Please select which you would like to include in this campaign planning:</p>
+            <br>
+            <div id="checkboxContainer" class="text-left"></div>
+            <form id="campaignForm" class="mb-3">
+                <div class="container mt-5">
+                    <!-- Budget Calculator Section -->
+                    <!-- Budget Calculator Section -->
+                    <div class="form-group">
+                        <label><b>Budget Calculator:</b></label>
+                        <div class="card border-primary">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    Budget Breakdown Calculator
+                                    <button class="btn btn-sm btn-outline-primary float-right" type="button" data-toggle="collapse" 
+                                            data-target="#budgetBreakdown" aria-expanded="false" aria-controls="budgetBreakdown">
+                                        Show/Hide Details
+                                    </button>
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <!-- Input Fields -->
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label for="client_budget">Client Budget ($):</label>
+                                        <input type="number" id="client_budget" name="client_budget" class="form-control" 
+                                            placeholder="0"  min="0" onchange="calculateBudget()">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="cpm_data_costs">CPM Data Costs ($):</label>
+                                        <input type="number" id="cpm_data_costs" name="cpm_data_costs" class="form-control" 
+                                            placeholder="0" step="1000" min="0" onchange="calculateBudget()">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="flat_data_costs">Flat Data Costs ($):</label>
+                                        <input type="number" id="flat_data_costs" name="flat_data_costs" class="form-control" 
+                                            placeholder="0" step="1000" min="0" onchange="calculateBudget()">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="pre_cost_adjustment">Margin (%):</label>
+                                        <input type="number" id="pre_cost_adjustment" name="pre_cost_adjustment" class="form-control" 
+                                            placeholder="20" value="20" step="1" min="0" max="100" onchange="calculateBudget()">
+                                    </div>
+                                </div>
+
+                                <!-- Calculated Final Budget (readonly) -->
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="budget"><b>Final Net Media Budget ($):</b></label>
+                                        <input type="text" id="budget" name="budget" class="form-control bg-light" 
+                                            placeholder="Calculated automatically" readonly>
+                                    </div>
+                                    <div class="col-md-6 d-flex align-items-end">
+                                        <small class="text-muted">This budget will be used in the scheduler</small>
+                                    </div>
+                                </div>
+
+                                <!-- Detailed Breakdown (Collapsible) -->
+                                <!-- Detailed Breakdown (Collapsible) -->
+                                <div class="collapse" id="budgetBreakdown">
+                                    <div class="card card-body bg-light">
+                                        <h6>Budget Breakdown:</h6>
+                                        <table class="table table-sm table-borderless">
+                                            <tbody>
+                                                <tr>
+                                                    <td><strong>Client Budget:</strong></td>
+                                                    <td id="display_client_budget">$0</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><span id="label_pre_cost_adjustment">Margin (20% ):</span></td>
+                                                    <td id="display_pre_cost_adjusted">$0</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Plan Overhead Fee (0.0%):</td>
+                                                    <td id="display_plan_overhead">$0</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>CPM Data Costs:</td>
+                                                    <td id="display_cpm_data">$0</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Flat Data Costs:</td>
+                                                    <td id="display_flat_data">$0</td>
+                                                </tr>
+                                                <tr class="border-top">
+                                                    <td><strong>Initial Net Media Budget:</strong></td>
+                                                    <td id="display_initial_budget"><strong>$0</strong></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>VA Posting Fee (2%):</td>
+                                                    <td id="display_va_posting">$0</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Tax Fee - VA Posting Fee (8.875%):</td>
+                                                    <td id="display_tax_fee">$0</td>
+                                                </tr>
+                                                <tr class="border-top bg-primary text-white">
+                                                    <td><strong>Final Net Media Budget:</strong></td>
+                                                    <td id="display_final_budget"><strong>$0</strong></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Lower bounds of the flight -->
+                    <div class="form-group">
+                        <label for="start_date"><b>Start Date:</b></label>
+                        <input type="date" id="start_date" name="start_date" class="form-control" min="2023-01-01" max="2027-12-31">
+                    </div>
+
+                    <!-- Upper bounds of the flight -->
+                    <div class="form-group">
+                        <label for="end_date"><b>End Date:</b></label>
+                        <input type="date" id="end_date" name="end_date" class="form-control" min="2023-01-01" max="2027-12-31">
+                    </div>
+
+                    <!-- Spot Length Distribution -->
+                    <div class="form-group">
+                        <label><b>Spot Length Distribution :</b></label>
+                        <p class="text-muted">Specify the percentage breakdown of spot lengths. Must total 100%.</p>
+                        
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="spots_15s">15-second spots (%):</label>
+                                <input type="number" id="spots_15s" name="spots_15s" class="form-control" 
+                                    placeholder="30" min="0" max="100" value="0">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="spots_30s">30-second spots (%):</label>
+                                <input type="number" id="spots_30s" name="spots_30s" class="form-control" 
+                                    placeholder="70" min="0" max="100" value="0">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="spots_60s">60-second spots (%):</label>
+                                <input type="number" id="spots_60s" name="spots_60s" class="form-control" 
+                                    placeholder="0" min="0" max="100" value="0">
+                            </div>
+                            <div class="col-md-2">
+                                <label for="spots_75s">75-second spots (%):</label>
+                                <input type="number" id="spots_75s" name="spots_75s" class="form-control" 
+                                    placeholder="0" min="0" max="100" value="0">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="spots_90s">90-second spots (%):</label>
+                                <input type="number" id="spots_90s" name="spots_90s" class="form-control" 
+                                    placeholder="0" min="0" max="100" value="0">
+                            </div>
+                        </div>
+                        <small id="percentage-total" class="form-text text-muted">Total: <span id="total-display">100</span>%</small>
+                        <small id="percentage-error" class="form-text text-danger" style="display: none;">Percentages must total 100%</small>
+                    </div>
+
+                    <!-- Hispanic Targeting Toggle -->
+                    <div class="form-group">
+                        <label><b>Hispanic Targeting:</b></label>
+                        <p class="text-muted">Include networks with Hispanic targeting in optimization.</p>
+                        
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="include_hispanic" name="include_hispanic" value="true">
+                            <label class="form-check-label" for="include_hispanic">
+                                Include Hispanic targeting networks
+                            </label>
+                        </div>
+                        <small class="form-text text-muted">Default: OFF (General market networks only)</small>
+                    </div>
+
+                    <!-- Broadcast Network Requirement -->
+                    <div class="form-group">
+                        <label><b>Broadcast Network Requirement:</b></label>
+                        <p class="text-muted">Require at least one broadcast network (ABC/CBS/NBC) in the plan.</p>
+                        
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="require_broadcast" name="require_broadcast" value="true">
+                            <label class="form-check-label" for="require_broadcast">
+                                Require broadcast networks (most efficient will be selected)
+                            </label>
+                        </div>
+                        <small class="form-text text-muted">Default: OFF (Broadcast networks included only if efficient)</small>
+                    </div>
+
+                    <!-- Cable News Network Requirement -->
+                    <div class="form-group">
+                        <label><b>Cable News Network Requirement:</b></label>
+                        <p class="text-muted">Exclude all cable news network (CNN/Fox News/MSNBC/Fox Business/HLN) in the plan.</p>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="require_cable_news" name="require_cable_news" value="true">
+                            <label class="form-check-label" for="require_cable_news">
+                                Exclude cable news network
+                            </label>
+                        </div>
+                        <small class="form-text text-muted">Default: OFF (Cable news networks included only if efficient)</small>
+                    </div>
+
+
+                    <!-- Dark weeks in flight -->
+                    <div class="form-group">
+                        <label for="dark_weeks"><b>Number of Dark Weeks:</b></label>
+                        <input type="text" id="dark_weeks" name="dark_weeks" class="form-control" placeholder="no commas or symbols -- e.g. 1">
+                    </div>
+
+                    <!-- Network Minimum Override -->
+                    <div class="form-group">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="use_custom_minimum" name="use_custom_minimum">
+                            <label class="form-check-label" for="use_custom_minimum">
+                                <b>Use Custom Network Minimum</b>
+                            </label>
+                        </div>
+                        <input type="number" class="form-control" id="network_minimum_override" name="network_minimum_override" 
+                            value="0" min="0" step="1000" 
+                            placeholder="Enter custom minimum (applies to all networks)"
+                            disabled>
+                        <small class="form-text text-muted">
+                            Check the box above and enter a value to override default network minimums. Applies uniformly to all networks. Leave unchecked to use default minimums.
+                        </small>
+                    </div>
+
+                    <script>
+                        // Enable/disable input based on checkbox
+                        document.getElementById('use_custom_minimum').addEventListener('change', function() {
+                            document.getElementById('network_minimum_override').disabled = !this.checked;
+                        });
+                    </script>
+
+                    <!-- Load Scheduler -->
+                    <div class="form-group">
+                        <label for="dark_weeks"><b>Load from past session (optional):</b></label>
+                        <input type="text" id="load_scheduler" name="load_scheduler" class="form-control" placeholder="optional">
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary mt-3 mb-3">Submit</button>
+
+                </div>
+            </form>
+            <div id="success" class="mt-3"></div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    {% raw %}
+    <script>
+        function getCSVsAsCheckboxes() {
+            fetch('/display-csvs', {
+                method: 'POST',
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.hasOwnProperty('error')) {
+                    console.log('Error found:', data.error);
+                    return { error: data.error }; 
+                }
+                let checkboxesHtml = '<table class="table table-bordered table-striped table-font">';
+                checkboxesHtml += `
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Datasets</th>
+                        </tr>
+                    </thead>
+                `;
+                checkboxesHtml += '<tbody>';
+                data.forEach(item => {
+                    checkboxesHtml += `
+                        <tr>
+                            <td>
+                                <label><input type="checkbox" name="csvFiles" value="${item}"> ${item}</label>
+                            </td>
+                        </tr>
+                    `;
+                });
+                checkboxesHtml += '</tbody></table>';
+                document.getElementById('checkboxContainer').innerHTML = checkboxesHtml;
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+            });
+        }
+
+
+        // Call the function when the page loads
+        window.onload = function() {
+            getCSVsAsCheckboxes();
+            
+        };
+
+        // Initialize calculator on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Call calculateBudget when page loads to initialize displays
+            calculateBudget();
+        });
+
+                // Validate percentage totals
+        function updatePercentageTotal() {
+            const spots15s = parseInt(document.getElementById('spots_15s').value) || 0;
+            const spots30s = parseInt(document.getElementById('spots_30s').value) || 0;
+            const spots60s = parseInt(document.getElementById('spots_60s').value) || 0;
+            const spots75s = parseInt(document.getElementById('spots_75s').value) || 0;
+            const spots90s = parseInt(document.getElementById('spots_90s').value) || 0;
+            const total = spots15s + spots30s + spots60s + spots75s + spots90s;
+            
+            document.getElementById('total-display').textContent = total;
+            
+            if (total === 100) {
+                document.getElementById('percentage-error').style.display = 'none';
+                document.getElementById('percentage-total').className = 'form-text text-success';
+                return true;
+            } else {
+                document.getElementById('percentage-error').style.display = 'block';
+                document.getElementById('percentage-total').className = 'form-text text-danger';
+                return false;
+            }
+        }
+
+        // Add event listeners for real-time validation
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('spots_15s').addEventListener('input', updatePercentageTotal);
+            document.getElementById('spots_30s').addEventListener('input', updatePercentageTotal);
+            document.getElementById('spots_60s').addEventListener('input', updatePercentageTotal);
+            document.getElementById('spots_75s').addEventListener('input', updatePercentageTotal);
+            document.getElementById('spots_90s').addEventListener('input', updatePercentageTotal);
+        });
+
+        // Handle ranker results
+        document.getElementById('campaignForm').addEventListener('submit', function(event) {
+            let currentPage = 1;
+            let rows, totalPages;
+            let currentTab = 1;
+            let originalRowsTable1, originalRowsTable2;
+            
+            // Clear any previous results
+            results = document.querySelector("#success");
+
+            event.preventDefault();
+
+              // Validate percentages
+            if (!updatePercentageTotal()) {
+                document.getElementById('success').innerHTML = `
+                    <div class="alert alert-danger" role="alert">
+                        <b>Error:</b> Spot length percentages must total exactly 100%.
+                    </div>
+                `;
+                return;
+            }
+
+            // Convert form data & VideoAmp dataset selection to JSON and send to backend
+            var formData = new FormData(this);
+            
+            var object = {"filters": 0};
+            formData.forEach(function(value, key){
+                object[key] = value;
+            });
+
+
+            // Ensure percentage values are included
+            object['spots_15s'] = document.getElementById('spots_15s').value || 30;
+            object['spots_30s'] = document.getElementById('spots_30s').value || 70;
+            object['spots_60s'] = document.getElementById('spots_60s').value || 0;
+            object['spots_75s'] = document.getElementById('spots_75s').value || 0;
+            object['spots_90s'] = document.getElementById('spots_90s').value || 0;
+
+            // Include budget calculator values for CPM calculations
+            object['original_client_budget'] = document.getElementById('client_budget').value || 0;
+            object['final_net_media_budget'] = document.getElementById('budget').value || 0;
+
+            // Include Hispanic targeting toggle
+            object['include_hispanic'] = document.getElementById('include_hispanic').checked;
+
+            // Include network minimum override
+            const useCustomMinimum = document.getElementById('use_custom_minimum')?.checked || false;
+            object['use_custom_minimum'] = useCustomMinimum;
+            object['network_minimum_override'] = useCustomMinimum ? 
+                (parseFloat(document.getElementById('network_minimum_override')?.value) || 0) : null;
+            
+            // Include broadcast requirement toggle
+            object['require_broadcast'] = document.getElementById('require_broadcast')?.checked || false;  
+
+            // Include cable news requirement toggle
+            object['require_cable_news'] = document.getElementById('require_cable_news')?.checked || false;  
+            
+            var checkedCheckbox = document.querySelector('input[name="csvFiles"]:checked');
+            if (checkedCheckbox) {
+                object['selectedDataset'] = checkedCheckbox.value;
+            }
+            else{
+                object['selectedDataset'] = 0
+            }
+            var json = JSON.stringify(object);
+
+            // Render loading button
+            originalButton = document.querySelector('#campaignForm > div > button');
+            const newButton = document.createElement('button');
+            newButton.className = 'btn btn-primary';
+            newButton.type = 'button';
+            newButton.disabled = true;
+            const spinnerSpan = document.createElement('span');
+            spinnerSpan.className = 'spinner-border spinner-border-sm';
+            spinnerSpan.setAttribute('role', 'status');
+            spinnerSpan.setAttribute('aria-hidden', 'true');
+            newButton.appendChild(spinnerSpan);
+            newButton.appendChild(document.createTextNode(' Loading...'));
+            originalButton.replaceWith(newButton);
+
+
+            fetch('/do_math', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: json
+            })
+            .then(response => {
+                // Render loading button
+                const loadingButton = document.querySelector('#campaignForm > div > button');
+                const originalButton = document.createElement('button');
+                originalButton.type = 'submit';
+                originalButton.className = 'btn btn-primary mt-3 mb-3';
+                originalButton.textContent = 'Submit';
+                loadingButton.replaceWith(originalButton);
+
+                // Distinguish between an error or raw HTML (success)
+                const contentType = response.headers.get('Content-Type');
+                if (contentType && contentType.includes('application/json')) {
+                    return response.json();
+                } else {
+                    return response.text();
+                }
+            })
+            .then(data => {
+                if (typeof data === 'object' && data !== null && 'error' in data) {
+                    document.getElementById('success').innerHTML = `
+                        <div class="alert alert-danger" role="alert">
+                            <b>An error occurred: </b> ${data.error}
+                        </div>
+                    `;
+                } else {
+                    results.innerHTML = ''
+                    document.getElementById('success').innerHTML = `
+                        <div class="alert alert-success" role="alert">
+                            Form submitted successfully.
+                        </div>
+                        ${data}
+                    `;
+                    // Reset rows
+                    // Reset rows - wait for DOM to render then initialize
+                    setTimeout(function() {
+                        // No need to reset originalRowsTable1 here anymore
+                        if (typeof initializePagination === 'function') {
+                            initializePagination();
+                        }
+                    }, 100);
+                }
+            })
+            .catch(error => {
+                document.getElementById('success').innerHTML = `
+                    <div class="alert alert-danger" role="alert">
+                        <b>An error occurred: </b> ${error.message}
+                    </div>
+                `;
+                console.log(error);
+            });
+
+    });
+
+        // Helper function to format currency
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+        // Budget Calculator Function
+        // Budget Calculator Function
+        function calculateBudget() {
+            console.log('calculateBudget() called'); // Debug line
+            
+            // Get input values
+            const clientBudget = parseFloat(document.getElementById('client_budget')?.value) || 0;
+            const cpmDataCosts = parseFloat(document.getElementById('cpm_data_costs')?.value) || 0;
+            const flatDataCosts = parseFloat(document.getElementById('flat_data_costs')?.value) || 0;
+            const preCostAdjustmentPct = parseFloat(document.getElementById('pre_cost_adjustment')?.value) || 20;
+            
+            console.log('Input values:', {clientBudget, cpmDataCosts, flatDataCosts, preCostAdjustmentPct}); // Debug line
+            
+            // Calculate intermediate values
+            const marginAmount = clientBudget * (preCostAdjustmentPct / 100); // Calculate margin amount
+            const afterMargin = clientBudget - marginAmount; // Amount after deducting margin
+            const planOverheadFee = clientBudget * 0.0; // 0%
+            const totalDataCosts = cpmDataCosts + flatDataCosts;
+            const initialNetMediaBudget = afterMargin - planOverheadFee - totalDataCosts;
+            const vaPostingFee = initialNetMediaBudget * 0.02; // 2%
+            const taxFee = vaPostingFee * 0.08875;
+            const finalNetMediaBudget = initialNetMediaBudget - vaPostingFee - taxFee;
+            
+            console.log('Calculated values:', {marginAmount, afterMargin, planOverheadFee, initialNetMediaBudget, vaPostingFee, finalNetMediaBudget}); // Debug line
+            
+            // Update the main budget field (this is what gets sent to scheduler)
+            document.getElementById('budget').value = Math.round(finalNetMediaBudget);
+            
+            // Update breakdown display with formatting - check if elements exist
+            const elements = [
+                'display_client_budget', 'display_pre_cost_adjusted', 'display_plan_overhead',
+                'display_cpm_data', 'display_flat_data', 'display_initial_budget',
+                'display_va_posting', 'display_tax_fee', 'display_final_budget'
+            ];
+            
+            elements.forEach(id => {
+                const element = document.getElementById(id);
+                if (!element) {
+                    console.error('Element not found:', id);
+                }
+            });
+            
+            // Update breakdown display
+            const displayClientBudget = document.getElementById('display_client_budget');
+            const displayPreCost = document.getElementById('display_pre_cost_adjusted');
+            const displayPlanOverhead = document.getElementById('display_plan_overhead');
+            const displayCpmData = document.getElementById('display_cpm_data');
+            const displayFlatData = document.getElementById('display_flat_data');
+            const displayInitialBudget = document.getElementById('display_initial_budget');
+            const displayVaPosting = document.getElementById('display_va_posting');
+            const displayTaxFee = document.getElementById('display_tax_fee');
+            const displayFinalBudget = document.getElementById('display_final_budget');
+            
+            if (displayClientBudget) displayClientBudget.textContent = formatCurrency(clientBudget);
+            if (displayPreCost) displayPreCost.textContent = formatCurrency(marginAmount);
+            // Update the label to show current percentage
+            const labelPreCost = document.getElementById('label_pre_cost_adjustment');
+            if (labelPreCost) labelPreCost.textContent = `Margin (${preCostAdjustmentPct}%):`;
+            if (displayPlanOverhead) displayPlanOverhead.textContent = formatCurrency(planOverheadFee);
+            if (displayCpmData) displayCpmData.textContent = formatCurrency(cpmDataCosts);
+            if (displayFlatData) displayFlatData.textContent = formatCurrency(flatDataCosts);
+            if (displayInitialBudget) displayInitialBudget.innerHTML = '<strong>' + formatCurrency(initialNetMediaBudget) + '</strong>';
+            if (displayVaPosting) displayVaPosting.textContent = formatCurrency(vaPostingFee);
+            if (displayTaxFee) displayTaxFee.textContent = formatCurrency(taxFee);
+            if (displayFinalBudget) displayFinalBudget.innerHTML = '<strong>' + formatCurrency(finalNetMediaBudget) + '</strong>';
+        }
+
+
+    </script>
+    {% endraw %}
+
+    <script src="{{ url_for('static', filename='js/form.js') }}"></script>
+
+</body>
+</html>

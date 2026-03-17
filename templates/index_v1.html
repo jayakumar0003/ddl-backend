@@ -1,0 +1,117 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .backdrop {
+            background-color: rgba(255, 255, 255, 0.8); /* White with 80% opacity */
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        body {
+            background: linear-gradient(#f6f6f6 100%);
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+          .mt-5 {
+            margin-top: 2rem !important;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+    .create-plan {
+      background-color: #6A4DFF;
+      color: white;
+    }
+
+    .actualize-plan {
+      background-color: #59D36F;
+      color: white;
+    }
+
+    .upload-csv {
+      background-color: #003C71;
+      color: white;
+    }
+
+    .documentation {
+      background-color: #00C2CB;
+      color: black;
+    }
+
+    .audiences {
+      background-color: #7defef;
+      color: black;
+    }
+
+    .datasource {
+        background-color: #0da4ab;
+        color: #ffffff;
+    }
+
+    .generate-impressions {
+      background-color: #4226d1; /* #6A4DFF */
+      color: white;
+    }
+
+    .reach-summary {
+      background-color: #54cb69;
+      color: white;
+    }
+
+    .measurement-report {
+      background-color: #0b6a6f;
+      color: #fff;
+    }
+
+    .btn {
+     border-radius: 5px !important;
+    }
+
+    /*.btn:hover {
+      opacity: 0.9;
+    }*/
+
+    h1 {
+        color: #003C71;
+    }
+    </style>
+</head>
+<body>
+    <div class="container mt-5 backdrop">
+        <h1 class="mb-4 text-center">DDL v0.0</h1>
+        <div class="btn-group col-6 mx-auto">
+            <button onclick="location.href='/plan'" class="btn create-plan btn-lg">Create plan</button>
+            <button onclick="location.href='/actualize-plan'" class="btn actualize-plan  btn-lg">Actualize Plan</button>
+            <button onclick="location.href='/upload-csv'" class="btn upload-csv  btn-lg">Upload VideoAmp CSV</button>
+            <button onclick="location.href='#'" class="btn documentation btn-lg">Documentation</button>
+            <button onclick="location.href='/audiences'" class="btn audiences btn-lg">Audiences</button>
+             <button onclick="location.href='/datasource-groups'" class="btn datasource btn-lg">Datasource Groups</button>
+            <button onclick="location.href='/'" class="btn generate-impressions btn-lg">Generate VA Impressions</button>
+            <button onclick="location.href='/plans'" class="btn reach-summary btn-lg">Generate Reach Curve Summary</button>
+            <button onclick="location.href='/measurement-reports'" class="btn measurement-report btn-lg">Ad Measurement Reports</button>
+        </div>
+        <img src="/static/wpp-logo.JPG" alt="Logo" class="mt-4" style="height: 90px;border-radius: 5px;">
+    </div>
+
+    <!-- Include Bootstrap JS and its dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
