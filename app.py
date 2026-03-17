@@ -23,11 +23,13 @@ from sendgrid.helpers.mail import Mail, Attachment, FileContent, FileName, FileT
 import base64
 import requests
 import tempfile
-
+from vercel_wsgi import handle_request
 
 ##changes
 load_dotenv()
 
+def handler(request):
+    return handle_request(app, request)
 
 # load SQL modules, secrets
 with open("module/config_prod.json", "r") as file:
@@ -2395,5 +2397,5 @@ def initialize_session():
     if 'remove_keys' not in session:
         session['remove_keys'] = {}
 
-if __name__ == '__main__':
-    app.run()
+if __name__ == "__main__":
+    app.run(debug=True)
